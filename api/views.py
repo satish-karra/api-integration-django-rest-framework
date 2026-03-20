@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from employees.models import Employee
+from rest_framework import mixins, generics
 
 # Function based views for non-PK operations
 @api_view(['GET', 'POST'])
@@ -42,7 +43,8 @@ def studentDetailView(request, pk):
     elif request.method == 'DELETE':
         student.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
+    
+"""
 # Class based views - Fetching all the data from data base (non-pk opertaions)
 class Employees(APIView):
     def get(self, request):
@@ -79,3 +81,27 @@ class EmployeeDetailView(APIView):
         employee = self.get_object(pk)
         employee.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+"""
+#Mixins
+class Employees(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeSerializer
+
+    def get(self, request):
+        return self.list(request)
+    
+    def post(self, request):
+        return self.create(request)
+    
+class EmployeeDetailView(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeSerializer
+
+    def get(self, request,pk):
+         return self.retrieve(request, pk)
+    
+    def put(self, request,pk):
+        return self.update(request,pk)
+    
+    def delete(self, request, pk):
+        return self.destroy(request,pk)
