@@ -14,4 +14,14 @@ urlpatterns = [
     # path('employees/<int:pk>/', views.EmployeeDetailView.as_view()),
 
     path('', include(router.urls)),
+
+# For Nested serializers non-pk operations
+    path('blogs/', views.BlogView.as_view()),
+    path('comments/', views.CommentView.as_view()),
+
+#For Nested Serializers pk based operations
+    path('blogs/<int:pk>/', views.BlogDetailView.as_view()),
+    path('comments/<int:pk>/', views.CommentDetailView.as_view()),
+
+
 ]
