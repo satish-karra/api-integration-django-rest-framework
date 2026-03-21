@@ -10,6 +10,10 @@ from employees.models import Employee
 from rest_framework import mixins, generics, viewsets
 from blogs.models import Blog, Comment
 from blogs.serializers import BlogSerializer, CommentSerializer
+from .pagination import CustomPagination
+from employees.filters import EmployeeFilter
+from rest_framework.filters import SearchFilter
+from rest_framework.filters import OrderingFilter
 
 
 # Function based views for non-PK operations
@@ -169,11 +173,16 @@ class EmployeeViewset(viewsets.ViewSet):
 class EmployeeViewset(viewsets.ModelViewSet):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
+    pagination_class = CustomPagination    # custom Pagination from class CustomPagination(pagination.py in api app)
+    filterset_class = EmployeeFilter
 
 #Nested Serializer non -pk opertaions for all objects in model
 class BlogView(generics.ListCreateAPIView):
     queryset = Blog.objects.all()
     serializer_class = BlogSerializer
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ['blog_title','blog_body']
+    ordering_fields = ['id', 'blog_title']
 
 class CommentView(generics.ListCreateAPIView):
     queryset = Comment.objects.all()
